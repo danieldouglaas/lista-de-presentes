@@ -149,7 +149,7 @@
             <button id="btn-add-gift-row" class="btn-link" type="button">+ Adicionar outra ideia</button>
           </div>
           <div id="gift-rows" class="gift-rows"></div>
-          <p class="field-hint">Você pode colocar links de lojas ou só descrever o que gosta (cores, marcas, estilos).</p>
+          <p class="field-hint">Escreva o que gostaria de ganhar (cores, marcas ou estilos). Se quiser, toque em "+ Colocar link da loja".</p>
         </div>
 
         <div class="form-group">
@@ -163,14 +163,14 @@
         </div>
 
         <div class="form-group">
-          <label for="input-pin">PIN de 4 dígitos para editar depois <span class="optional">(opcional)</span></label>
+          <label for="input-pin">Senha de 4 números <span class="optional">(opcional — para proteger sua lista)</span></label>
           <input
             id="input-pin"
             type="password"
             inputmode="numeric"
             pattern="[0-9]{4}"
             maxlength="4"
-            placeholder="Ex: 1234 (evita que outra pessoa edite sem querer)"
+            placeholder="Ex: 1234 (se não quiser senha, deixe em branco)"
           />
         </div>
 
@@ -185,17 +185,17 @@
     </div>
   </div>
 
-  <!-- Modal simples de verificação de PIN -->
+  <!-- Modal simples de verificação de senha -->
   <div id="pin-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="pin-modal-title">
     <div class="modal-card modal-card-sm">
       <div class="modal-header">
-        <h2 id="pin-modal-title">Digite o PIN da lista</h2>
+        <h2 id="pin-modal-title">Digite a senha da lista</h2>
         <button id="btn-close-pin" class="icon-btn" type="button" aria-label="Fechar janela">✕</button>
       </div>
       <form id="pin-form" class="modal-body">
-        <p class="pin-description">Essa lista está protegida por um PIN de 4 dígitos para evitar alterações acidentais.</p>
+        <p class="pin-description">Essa lista está protegida por uma senha de 4 números para evitar alterações por engano.</p>
         <div class="form-group">
-          <label for="pin-verify-input">PIN (4 dígitos)</label>
+          <label for="pin-verify-input">Senha (4 números)</label>
           <input
             id="pin-verify-input"
             type="password"
@@ -204,7 +204,7 @@
             required
             placeholder="••••"
           />
-          <p id="pin-error" class="error-text hidden">PIN incorreto. Tente novamente.</p>
+          <p id="pin-error" class="error-text hidden">Senha incorreta. Tente novamente.</p>
         </div>
         <div class="modal-footer">
           <div class="modal-footer-right">

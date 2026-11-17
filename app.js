@@ -442,11 +442,29 @@
     const urlInput = document.createElement("input");
     urlInput.type = "url";
     urlInput.className = "gift-url-input";
-    urlInput.placeholder = "Link de exemplo (opcional, ex: https://...)";
+    urlInput.placeholder = "Cole aqui o endereço da loja (se quiser)";
     urlInput.maxLength = 350;
     urlInput.value = link;
 
-    row.append(top, urlInput);
+    const hasLink = Boolean((link || "").trim());
+    if (!hasLink) {
+      urlInput.classList.add("hidden");
+    }
+
+    const addLinkBtn = document.createElement("button");
+    addLinkBtn.type = "button";
+    addLinkBtn.className = "btn-link gift-link-toggle";
+    addLinkBtn.textContent = "+ Colocar link da loja";
+    if (hasLink) {
+      addLinkBtn.classList.add("hidden");
+    }
+    addLinkBtn.addEventListener("click", () => {
+      urlInput.classList.remove("hidden");
+      addLinkBtn.classList.add("hidden");
+      urlInput.focus();
+    });
+
+    row.append(top, addLinkBtn, urlInput);
     return row;
   }
 
@@ -556,7 +574,7 @@
     const pin = el.inputPin.value.trim();
 
     if (pin && !/^\d{4}$/.test(pin)) {
-      showToast("O PIN deve ter exatamente 4 números.");
+      showToast("A senha deve ter exatamente 4 números.");
       el.inputPin.focus();
       return;
     }
