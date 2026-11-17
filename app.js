@@ -39,7 +39,9 @@
     entryForm: document.getElementById("entry-form"),
     entryId: document.getElementById("entry-id"),
     inputName: document.getElementById("input-name"),
-    inputSizes: document.getElementById("input-sizes"),
+    inputSizeShirt: document.getElementById("input-size-shirt"),
+    inputSizePants: document.getElementById("input-size-pants"),
+    inputSizeShoe: document.getElementById("input-size-shoe"),
     giftRows: document.getElementById("gift-rows"),
     btnAddGiftRow: document.getElementById("btn-add-gift-row"),
     inputAvoid: document.getElementById("input-avoid"),
@@ -448,6 +450,35 @@
     return row;
   }
 
+  function formatSizesFromInputs() {
+    const parts = [];
+    const shirt = el.inputSizeShirt.value.trim();
+    const pants = el.inputSizePants.value.trim();
+    const shoe = el.inputSizeShoe.value.trim();
+    if (shirt) parts.push(`Camisa ${shirt}`);
+    if (pants) parts.push(`Calça/Bermuda ${pants}`);
+    if (shoe) parts.push(`Calçado ${shoe}`);
+    return parts.join(", ");
+  }
+
+  function populateSizeInputs(sizesText) {
+    el.inputSizeShirt.value = "";
+    el.inputSizePants.value = "";
+    el.inputSizeShoe.value = "";
+    if (!sizesText) return;
+
+    const segments = sizesText.split(/[,·]/).map((s) => s.trim()).filter(Boolean);
+    for (const seg of segments) {
+      if (/^(camisa|camiseta|blusa)\s+/i.test(seg)) {
+        el.inputSizeShirt.value = seg.replace(/^(camisa|camiseta|blusa)\s+/i, "").trim();
+      } else if (/^(cal[çc]a\/bermuda|cal[çc]a|bermuda|short)\s+/i.test(seg)) {
+        el.inputSizePants.value = seg.replace(/^(cal[çc]a\/bermuda|cal[çc]a|bermuda|short)\s+/i, "").trim();
+      } else if (/^(cal[çc]ado|t[êe]nis|sapato|sand[áa]lia)\s+/i.test(seg)) {
+        el.inputSizeShoe.value = seg.replace(/^(cal[çc]ado|t[êe]nis|sapato|sand[áa]lia)\s+/i, "").trim();
+      }
+    }
+  }
+
   function openEntryModal(entry = null) {
     el.entryForm.reset();
     el.giftRows.innerHTML = "";
@@ -456,7 +487,7 @@
       el.modalTitle.textContent = `Editar lista de ${entry.name}`;
       el.entryId.value = entry.id;
       el.inputName.value = entry.name || "";
-      el.inputSizes.value = entry.sizes || "";
+      populateSizeInputs(entry.sizes || "");
       el.inputAvoid.value = entry.avoid || "";
       el.inputPin.value = entry.pin || "";
       el.btnDeleteEntry.classList.remove("hidden");
@@ -520,7 +551,7 @@
     event.preventDefault();
 
     const name = el.inputName.value.trim();
-    const sizes = el.inputSizes.value.trim();
+    const sizes = formatSizesFromInputs();
     const avoid = el.inputAvoid.value.trim();
     const pin = el.inputPin.value.trim();
 

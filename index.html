@@ -126,13 +126,21 @@
         </div>
 
         <div class="form-group">
-          <label for="input-sizes">Tamanhos (roupa, calçado, anel...) <span class="optional">(opcional)</span></label>
-          <input
-            id="input-sizes"
-            type="text"
-            maxlength="100"
-            placeholder="Ex: Camisa M, Calça 40, Tênis 39"
-          />
+          <label>Tamanhos <span class="optional">(opcional — preencha só o que quiser)</span></label>
+          <div class="sizes-grid">
+            <div class="size-field">
+              <label for="input-size-shirt">Camisa / Blusa</label>
+              <input id="input-size-shirt" type="text" maxlength="20" placeholder="Ex: M, G..." />
+            </div>
+            <div class="size-field">
+              <label for="input-size-pants">Calça / Bermuda</label>
+              <input id="input-size-pants" type="text" maxlength="20" placeholder="Ex: 40, 42..." />
+            </div>
+            <div class="size-field">
+              <label for="input-size-shoe">Calçado</label>
+              <input id="input-size-shoe" type="text" maxlength="20" placeholder="Ex: 37, 41..." />
+            </div>
+          </div>
         </div>
 
         <div class="form-group">

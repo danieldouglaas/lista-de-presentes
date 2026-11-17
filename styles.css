@@ -638,6 +638,30 @@ body {
   color: var(--text-muted);
 }
 
+.sizes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.size-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.size-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+@media (max-width: 520px) {
+  .sizes-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .gift-rows {
   display: flex;
   flex-direction: column;
