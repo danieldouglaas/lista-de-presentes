@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amigo Oculto da Família — Lista de Presentes</title>
+  <meta
+    name="description"
+    content="Mural de preferências de presentes do nosso Amigo Oculto de Natal. Adicione suas ideias para ajudar quem tirou você!"
+  />
+
+  <!-- Open Graph (para ficar bonito ao compartilhar no WhatsApp) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="🎄 Amigo Oculto — Lista de Presentes da Família" />
+  <meta
+    property="og:description"
+    content="Entre no link, veja o que cada um quer ganhar e cadastre suas preferências de presentes!"
+  />
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Flocos de neve sutis no fundo -->
+  <div class="snow-layer" aria-hidden="true"></div>
+
+  <header class="hero">
+    <div class="container hero-inner">
+      <div class="hero-badge">🎄 Natal em Família</div>
+      <h1 id="app-title">Amigo Oculto — Lista de Presentes</h1>
+      <p id="app-subtitle" class="hero-subtitle">
+        Já fizemos o sorteio! Agora deixe suas dicas e preferências de presentes aqui para facilitar a vida do seu Amigo Oculto.
+      </p>
+      <p id="app-price-hint" class="price-hint hidden"></p>
+
+      <div class="hero-actions">
+        <button id="btn-open-add" class="btn btn-primary" type="button">
+          <span aria-hidden="true">🎁</span>
+          Adicionar minha lista
+        </button>
+        <button id="btn-share-link" class="btn btn-secondary" type="button">
+          <span aria-hidden="true">🔗</span>
+          Copiar link para o WhatsApp
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-content">
+    <!-- Aviso de modo demonstração (só aparece se Supabase não estiver configurado) -->
+    <div id="demo-banner" class="demo-banner hidden" role="status">
+      <div class="demo-banner-text">
+        <strong>Modo Demonstração (Local):</strong> As alterações estão sendo salvas apenas neste navegador.
+        Para toda a família ver e editar pelo celular, conecte uma Planilha do Google (ou Supabase) em
+        <code>config.js</code> seguindo o <code>README.md</code>.
+      </div>
+      <button id="btn-dismiss-demo" class="demo-dismiss" type="button" aria-label="Fechar aviso">✕</button>
+    </div>
+
+    <!-- Barra de busca e resumo -->
+    <section class="toolbar" aria-label="Filtros e busca">
+      <div class="search-box">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input
+          id="search-input"
+          type="search"
+          placeholder="Buscar por nome ou presente..."
+          autocomplete="off"
+        />
+      </div>
+      <div class="stats-pill">
+        <span id="participant-count">0</span> listas cadastradas
+      </div>
+    </section>
+
+    <!-- Estado de carregamento -->
+    <div id="loading-state" class="state-box">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Carregando listas de presentes...</p>
+    </div>
+
+    <!-- Estado vazio -->
+    <div id="empty-state" class="state-box hidden">
+      <div class="empty-emoji" aria-hidden="true">🎅</div>
+      <h2>Nenhuma lista encontrada</h2>
+      <p id="empty-message">Seja a primeira pessoa da família a colocar suas ideias de presentes!</p>
+    </div>
+
+    <!-- Grade de cartões -->
+    <section id="wishlist-grid" class="wishlist-grid" aria-label="Listas de presentes da família"></section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Feito com carinho para o nosso Natal em família 🎄✨</p>
+    </div>
+  </footer>
+
+  <!-- Modal Adicionar / Editar Lista -->
+  <div id="entry-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modal-title">Minha Lista de Presentes</h2>
+        <button id="btn-close-modal" class="icon-btn" type="button" aria-label="Fechar janela">✕</button>
+      </div>
+
+      <form id="entry-form" class="modal-body">
+        <input type="hidden" id="entry-id" />
+
+        <div class="form-group">
+          <label for="input-name">Seu nome (ou apelido na família) <span class="required">*</span></label>
+          <input
+            id="input-name"
+            type="text"
+            required
+            maxlength="60"
+            placeholder="Ex: Tia Maria, João Pedro, Vó Lúcia..."
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="input-sizes">Tamanhos (roupa, calçado, anel...) <span class="optional">(opcional)</span></label>
+          <input
+            id="input-sizes"
+            type="text"
+            maxlength="100"
+            placeholder="Ex: Camisa M, Calça 40, Tênis 39"
+          />
+        </div>
+
+        <div class="form-group">
+          <div class="label-row">
+            <label>Ideias de presentes que eu gostaria <span class="required">*</span></label>
+            <button id="btn-add-gift-row" class="btn-link" type="button">+ Adicionar outra ideia</button>
+          </div>
+          <div id="gift-rows" class="gift-rows"></div>
+          <p class="field-hint">Você pode colocar links de lojas ou só descrever o que gosta (cores, marcas, estilos).</p>
+        </div>
+
+        <div class="form-group">
+          <label for="input-avoid">O que evitar / Não gosto <span class="optional">(opcional)</span></label>
+          <input
+            id="input-avoid"
+            type="text"
+            maxlength="160"
+            placeholder="Ex: Não uso perfume doce, não gosto de chocolate branco"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="input-pin">PIN de 4 dígitos para editar depois <span class="optional">(opcional)</span></label>
+          <input
+            id="input-pin"
+            type="password"
+            inputmode="numeric"
+            pattern="[0-9]{4}"
+            maxlength="4"
+            placeholder="Ex: 1234 (evita que outra pessoa edite sem querer)"
+          />
+        </div>
+
+        <div class="modal-footer">
+          <button id="btn-delete-entry" class="btn btn-danger hidden" type="button">Excluir lista</button>
+          <div class="modal-footer-right">
+            <button id="btn-cancel-modal" class="btn btn-ghost" type="button">Cancelar</button>
+            <button id="btn-save-entry" class="btn btn-primary" type="submit">Salvar lista</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal simples de verificação de PIN -->
+  <div id="pin-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="pin-modal-title">
+    <div class="modal-card modal-card-sm">
+      <div class="modal-header">
+        <h2 id="pin-modal-title">Digite o PIN da lista</h2>
+        <button id="btn-close-pin" class="icon-btn" type="button" aria-label="Fechar janela">✕</button>
+      </div>
+      <form id="pin-form" class="modal-body">
+        <p class="pin-description">Essa lista está protegida por um PIN de 4 dígitos para evitar alterações acidentais.</p>
+        <div class="form-group">
+          <label for="pin-verify-input">PIN (4 dígitos)</label>
+          <input
+            id="pin-verify-input"
+            type="password"
+            inputmode="numeric"
+            maxlength="4"
+            required
+            placeholder="••••"
+          />
+          <p id="pin-error" class="error-text hidden">PIN incorreto. Tente novamente.</p>
+        </div>
+        <div class="modal-footer">
+          <div class="modal-footer-right">
+            <button id="btn-cancel-pin" class="btn btn-ghost" type="button">Cancelar</button>
+            <button class="btn btn-primary" type="submit">Desbloquear</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast de feedback -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
